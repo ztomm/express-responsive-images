@@ -88,7 +88,7 @@ app.use(responsiveImages({
 }));
 ```
 
-### staticDir (`string`)
+### staticDir (string)
 Public directory with static files. Common: '/public' or '/pub' or '/dist' ...  
   
 This is not the folder to watch for images. The module need this to find images in the filesystem.
@@ -97,7 +97,7 @@ This is not the folder to watch for images. The module need this to find images 
 staticDir: '/public'
 ```
 
-### watchedDirectories (`array`)  
+### watchedDirectories (array)  
 Array of directories to watch for images. The module is listening to requests pointing to this folders.  
   
 Using wildcards `*` is possible.  
@@ -116,21 +116,21 @@ watchedDirectories: ['/images/*']
 watchedDirectories: ['/images', '/images/*']
 ```
 
-### fileTypes (`array`)  
+### fileTypes (array)  
 Array of supported filetypes.
 
 ```javascript
 fileTypes: ['webp', 'jpg', 'jpeg', 'png', 'gif']
 ```
 
-### fileTypeConversion (`string`)  
+### fileTypeConversion (string)  
 All images will be converted to a specified filetype. 
 
 ```javascript
 fileTypeConversion: 'webp'
 ```
 
-### cacheSuffix (`string`)  
+### cacheSuffix (string)  
 Foldername suffix where images get cached. The folder will be generated automatically. 
   
 For example the image `/images/img.jpg` will be cached in `/images-cache/1024/img.jpg`.  
@@ -141,14 +141,14 @@ Another example: `/images/user/profile.jpg` cached in `/images/user-cache/800/pr
 cacheSuffix: '-cache'
 ```
 
-### cookieName (`string`)  
+### cookieName (string)  
 The cookie name is changable. The name has to be the same as it's called in the `<head>` tag (section "usage" above).
 
 ```javascript
 cookieName: 'screen'
 ```
 
-### scaleBy (`string`)  
+### scaleBy (string)  
 Possible values: `'breakpoint'` or `'viewport'`.  
   
 `breakpoint` scales images to the next equal or higher breakpoint (see option `breakpoints` below).  
@@ -162,7 +162,7 @@ scaleBy: 'breakpoint'
 scaleBy: 'viewport'
 ```
 
-### breakpoints (`array`)  
+### breakpoints (array)  
 Array of legal sizes the images get scaled to.  
   
 Example: A notebook device with a width of 1280px will create and get images scaled to 1280px in width (exact breakpoint).
@@ -173,7 +173,7 @@ Another example: A mobile device with a width of 780px will create and get image
 breakpoints: [320, 480, 640, 800, 1024, 1280, 1366, 1440, 1600, 1920, 2048, 2560, 3440, 4096]
 ```
 
-### directScaling (`boolean`)  
+### directScaling (boolean)  
 `directScaling` and `directScaleSizes` is used to scale images directly if the query parameter `w` is set.  
   
 Example `/images/img.jpg?w=180` scales img.jpg to 180px in width and caches it in `images-cache/180/img.jpg`.  
@@ -188,7 +188,7 @@ directScaling: false
 
 It is recommended to combine this option with `directScaleSizes` to prevent bloating your webspace.
 
-### directScalingParam (`string`)  
+### directScalingParam (string)  
 The query parameter in the url for `directScaling`.  
 
 ```javascript
@@ -197,7 +197,7 @@ directScalingParam: 'w'
 
 Change this to `myparam` then the url should look like `img.jpg?myparam=180`
 
-### directScaleSizes (`array`)  
+### directScaleSizes (array)  
 Array of allowed sizes (see option `directScaling` above).  
   
 If `directScaling` is enabled it is recommended to specify allowed image sizes in here.  
@@ -218,7 +218,7 @@ The urls has to be then:
 - `/images/img.jpg?w=180`
 - `/images/img.jpg?w=260`
 
-### debug (`boolean`)  
+### debug (boolean)  
 Useful when implementing this module.  
 
 ```javascript
