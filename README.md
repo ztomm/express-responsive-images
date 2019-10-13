@@ -4,17 +4,17 @@ Server-side scaling and caching images on-the-fly.
   
 Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time. 
   
+![express-responsive-images](https://raw.githubusercontent.com/xkmgt/express-responsive-images/master/express-responsive-images.png)
+  
 **Features**
 - scaling and caching by breakpoints
 - scaling and caching depending on browser width
-- direct scaling (`image.jpg?w=200`)
+- direct scaling
 - filetype conversion, e.g. webp
 - define watched directories
 - define supported filetypes
 - cached images will be updated when origin image has been modified
 - debug mode, see process step-by-step in console
-  
-![express-responsive-images](https://raw.githubusercontent.com/xkmgt/express-responsive-images/master/express-responsive-images.png)
 
 ## install
 
