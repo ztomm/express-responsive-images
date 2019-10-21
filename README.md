@@ -3,8 +3,10 @@
 Server-side scaling and caching images on-the-fly.  
   
 Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time. 
-  
+
 ![express-responsive-images](https://raw.githubusercontent.com/xkmgt/express-responsive-images/master/express-responsive-images.png)
+
+[express-responsive-images on npmjs.org](https://www.npmjs.com/package/express-responsive-images)  
   
 **Features**
 - scaling and caching by breakpoints

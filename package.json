@@ -1,6 +1,6 @@
 {
     "name": "express-responsive-images",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Server-side scaling and caching images on-the-fly. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
     "main": "index.js",
     "repository": {
@@ -30,8 +30,8 @@
     "dependencies": {
         "chalk": "^2.4.2",
         "fs-extra": "^8.1.0",
-        "image-size": "^0.7.4",
-        "sharp": "^0.23.0"
+        "image-size": "^0.8.3",
+        "sharp": "^0.23.1"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
