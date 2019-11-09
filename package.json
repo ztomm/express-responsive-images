@@ -1,7 +1,7 @@
 {
     "name": "express-responsive-images",
-    "version": "1.0.3",
-    "description": "Server-side scaling and caching images on-the-fly. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
+    "version": "1.0.4",
+    "description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
     "main": "index.js",
     "repository": {
         "type": "git",
@@ -14,6 +14,7 @@
         "adaptive",
         "cached",
         "on-the-fly",
+        "node.js",
         "express",
         "connect",
         "middleware",
