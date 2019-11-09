@@ -1,12 +1,15 @@
 # express-responsive-images
 
-Server-side scaling and caching images on-the-fly.  
+Server-side scaling and caching images on-the-fly for express middleware on Node.js.  
   
 Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time. 
 
 ![express-responsive-images](https://raw.githubusercontent.com/xkmgt/express-responsive-images/master/express-responsive-images.png)
 
 [express-responsive-images on npmjs.org](https://www.npmjs.com/package/express-responsive-images)  
+
+A minimal application to demonstrate this module can be found here:  
+[github/express-responsive-images-demo](https://github.com/xkmgt/express-responsive-images-demo)  
   
 **Features**
 - scaling and caching by breakpoints
