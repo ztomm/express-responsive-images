@@ -193,7 +193,7 @@ module.exports = function (opts = {}) {
     debug(`green`, `new image width is probably ${newImageWidth}`)
 
     // return if image is smaller than newImageWidth
-    if (newImageWidth >= imageSize(originFilePath).width) {
+    if (newImageWidth >= imageSize(originFilePath).width && reqFileType === newFileType) {
       debug(`orange`, `origin image is smaller than new image width`)
       return next()
     }
