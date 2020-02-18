@@ -282,21 +282,21 @@ This is just an experimental idea and has to be adjusted individually.
 To have updated cookies while requests are fired and the page does not get fully reloaded a resize event listener could help:
 
 ```javascript
-(function() {
-    var w = window.innerWidth;
-    window.addEventListener('resize', function() {
-        if (w !== window.innerWidth) {
-            w = window.innerWidth;
-            setCookie();
-            // or instead of setCookie() reload the page
-            // location.reload();
-        }
-    }, false);
+(function () {
+	var w = window.innerWidth;
+	window.addEventListener('resize', function () {
+		if (w !== window.innerWidth) {
+			w = window.innerWidth;
+			setCookie();
+			// or instead of setCookie() reload the page
+			// location.reload();
+		}
+	}, false);
 
-    var setCookie = function() {
-        document.cookie = 'screen=' + ('devicePixelRatio' in window ? devicePixelRatio : 1) + ',' + window.innerWidth + '; path=/';
-    };
+	var setCookie = function () {
+		document.cookie = 'screen=' + ('devicePixelRatio' in window ? devicePixelRatio : 1) + ',' + window.innerWidth + '; path=/';
+	};
 
-    setCookie();
+	setCookie();
 })();
 ```

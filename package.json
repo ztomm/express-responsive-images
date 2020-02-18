@@ -1,40 +1,40 @@
 {
-    "name": "express-responsive-images",
-    "version": "1.0.8",
-    "description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
-    "main": "index.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/xkmgt/express-responsive-images.git"
-    },
-    "keywords": [
-        "responsive",
-        "images",
-        "server-side",
-        "adaptive",
-        "cached",
-        "on-the-fly",
-        "node.js",
-        "express",
-        "connect",
-        "middleware",
-        "webp",
-        "jpeg",
-        "gif",
-        "png"
-    ],
-    "author": "Murat Karaca <dev@muratkaraca.de> (https://www.kmgt.de)",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/xkmgt/express-responsive-images/issues"
-    },
-    "dependencies": {
-        "chalk": "^3.0.0",
-        "fs-extra": "^8.1.0",
-        "image-size": "^0.8.3",
-        "sharp": "^0.24.0"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    }
+	"name": "express-responsive-images",
+	"version": "1.1.0",
+	"description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/xkmgt/express-responsive-images.git"
+	},
+	"keywords": [
+		"responsive",
+		"images",
+		"server-side",
+		"adaptive",
+		"cached",
+		"on-the-fly",
+		"node.js",
+		"express",
+		"connect",
+		"middleware",
+		"webp",
+		"jpeg",
+		"gif",
+		"png"
+	],
+	"author": "Murat Karaca <dev@muratkaraca.de> (https://www.kmgt.de)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/xkmgt/express-responsive-images/issues"
+	},
+	"dependencies": {
+		"chalk": "^3.0.0",
+		"fs-extra": "^8.1.0",
+		"image-size": "^0.8.3",
+		"sharp": "^0.24.0"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	}
 }
