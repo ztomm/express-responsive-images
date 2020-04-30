@@ -44,6 +44,7 @@ See other strategies down below.
 ```javascript
 const responsiveImages = require('express-responsive-images');
 
+// use it before declaring static routes
 app.use(responsiveImages({
     // options
     staticDir: '/public',
@@ -51,7 +52,7 @@ app.use(responsiveImages({
     // ...
 }));
 
-// below your static routes, something like this:
+// static routes, something like this:
 app.use('/', express.static(path.join(__dirname, 'public')));
 ```
 
