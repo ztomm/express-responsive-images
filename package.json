@@ -1,6 +1,6 @@
 {
 	"name": "express-responsive-images",
-	"version": "1.1.6",
+	"version": "1.1.7",
 	"description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
 	"main": "index.js",
 	"repository": {
@@ -29,8 +29,8 @@
 		"url": "https://github.com/xkmgt/express-responsive-images/issues"
 	},
 	"dependencies": {
-		"chalk": "^4.0.0",
-		"fs-extra": "^9.0.0",
+		"chalk": "^4.1.0",
+		"fs-extra": "^9.0.1",
 		"image-size": "^0.8.3",
 		"sharp": "^0.25.4"
 	},
