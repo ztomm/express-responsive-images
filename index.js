@@ -102,6 +102,17 @@ module.exports = function (opts = {}) {
 		var cacheFileWidth = 0                             // will become e.g. '1280'
 		var cacheDirPath = path.join(process.cwd(), options.staticDir + path.dirname(requestUrl) + options.cacheSuffix) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images-cache', will become e.g.: '<FILESYSTEMPATH>/<PROJECT>/public/images-cache/1280'
 
+		// is image corrupted ?
+		var isImageCorrupted = (imagePath) => {
+			try {
+				imageSize(imagePath)
+				return false
+			} catch (err) {
+				debug(`red`, `(${imagePath}) image is corrupted`)
+				return true
+			}
+		}
+
 		// change requested url and return
 		var sendCachedFile = () => {
 			req.url = newFilePath
@@ -171,6 +182,9 @@ module.exports = function (opts = {}) {
 			debug(`red`, `(${reqFileName}) origin image does not exists`)
 			return next()
 		}
+
+		// origin image corrupted ?
+		if (isImageCorrupted(originFilePath)) return next()
 
 		// does cookie exists ?
 		if (req.headers.cookie) {
