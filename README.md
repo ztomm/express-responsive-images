@@ -48,7 +48,7 @@ const responsiveImages = require('express-responsive-images');
 app.use(responsiveImages({
     // options
     staticDir: '/public',
-    watchedDirectories: ['/images', '/media'],
+    watchedDirectories: ['/images', '/media'], // inside staticDir
     // ...
 }));
 
@@ -58,19 +58,19 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 
 ## Real-World scenarios
 
-You have one (big) image as origin: `/images/display.jpg` (1920x1080px).  
+You have one (big) image as origin: `/public/images/desktop.jpg` (1920x1080px).  
   
 Scenario 1 - desktop device width 1920px:  
 The clients device width is equal or even higher than 1920px. Everything is fine, the image will be delivered as usual.  
   
 Scenario 2 - notebook device width 1280px:  
-The clients device width is smaller than the image above. The image will be scaled down to 1280px (one time) and cached in `/images-cache/1280/display.jpg`. Other devices with same resolution will surf the cached file.
+The clients device width is smaller than the image above. The image will be scaled down to 1280px (one time) and cached in `/images-cache/1280/desktop.jpg`. Other devices with same resolution will surf the cached file.
   
 Scenario 3 - mobile device width 320px and a densitiy of 1.5:  
-The above image will be scaled to 480px (320 x 1.5) and cached in `/images-cache/480/display.jpg`.  
+The above image will be scaled to 480px (320 x 1.5) and cached in `/public/images-cache/480/desktop.jpg`.  
   
 Scenario 4 - direct scaling:  
-You need the image in 200px regardless of the clients device width. Get it with `/images/display.jpg?w=200`. See the options `directScaling` and `directScaleSizes` to enable this feature.
+You need the image in 200px regardless of the clients device width. Get it with `/public/images/desktop.jpg?w=200`. See the options `directScaling` and `directScaleSizes` to enable this feature.
   
 ## options (default values)
 By default images are scaled to a specified list of sizes (option `scaleBy: 'breakpoint'`).  
@@ -95,16 +95,14 @@ app.use(responsiveImages({
 ```
 
 ### staticDir (string)
-Public directory with static files. Common: '/public' or '/pub' or '/dist' ...  
+The application's public directory with static files. Common: '/public' or '/pub' or '/dist' ...  
   
-This is not the folder to watch for images. The module need this to find images in the filesystem.
-
 ```javascript
 staticDir: '/public'
 ```
 
 ### watchedDirectories (array)  
-Array of directories to watch for images. The module is listening to requests pointing to this folders.  
+Array of directories nested in `staticDir` to watch for images. The module is listening to requests pointing to this folders.  
   
 Using wildcards `*` is possible.  
 
@@ -139,10 +137,8 @@ fileTypeConversion: 'webp'
 ### cacheSuffix (string)  
 Foldername suffix where images get cached. The folder will be generated automatically. 
   
-For example the image `/images/img.jpg` will be cached in `/images-cache/1024/img.jpg`.  
+For example the image `/public/images/img.jpg` will be cached in `/public/images-cache/640/img.jpg`.  
   
-Another example: `/images/user/profile.jpg` cached in `/images/user-cache/800/profile.jpg`.  
-
 ```javascript
 cacheSuffix: '-cache'
 ```
@@ -169,7 +165,7 @@ scaleBy: 'viewport'
 ```
 
 ### breakpoints (array)  
-Array of legal sizes the images get scaled to.  
+Array of allowed sizes images get scaled to.  
   
 Example: A notebook device with a width of 1280px will create and get images scaled to 1280px in width (exact breakpoint).
   
@@ -182,11 +178,11 @@ breakpoints: [320, 480, 640, 800, 1024, 1280, 1366, 1440, 1600, 1920, 2048, 2560
 ### directScaling (boolean)  
 `directScaling` and `directScaleSizes` is used to scale images directly if the query parameter `w` is set.  
   
-Example `/images/img.jpg?w=180` scales img.jpg to 180px in width and caches it in `images-cache/180/img.jpg`.  
+Example `images/img.jpg?w=180` scales img.jpg to 180px in width and caches it in `images-cache/180/img.jpg`.  
   
-The query parameter is by default `w`, e.g `img.jpg?w=180`. The value is the width in pixels. The parameter name is changable with the option `directScalingParam`.  
+The query parameter is by default `w`, e.g. `img.jpg?w=180`. The value is the width in pixels. The parameter name is changable with the option `directScalingParam`.  
   
-If set to true and a parameter `w` is send then `scaleBy` is ignored.
+(`scaleBy` is ignored when `directScaling: true` and parameter `w` is send.)
 
 ```javascript
 directScaling: false
@@ -206,7 +202,7 @@ Change this to `myparam` then the url should look like `img.jpg?myparam=180`
 ### directScaleSizes (array)  
 Array of allowed sizes (see option `directScaling` above).  
   
-If `directScaling` is enabled it is recommended to specify allowed image sizes in here.  
+If `directScaling` is enabled it is recommended to specify allowed image sizes as well.  
   
 Leave it empty to allow every image size.  
 
@@ -221,8 +217,8 @@ directScaleSizes: [180, 260]
 ```
 
 The urls has to be then:  
-- `/images/img.jpg?w=180`
-- `/images/img.jpg?w=260`
+- `path-to/img.jpg?w=180`
+- `path-to/img.jpg?w=260`
 
 ### debug (boolean)  
 Useful when implementing this module.  

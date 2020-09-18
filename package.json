@@ -1,6 +1,6 @@
 {
 	"name": "express-responsive-images",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
 	"main": "index.js",
 	"repository": {
