@@ -100,9 +100,16 @@ The application's public directory with static files. Common: '/public' or '/pub
 ```javascript
 staticDir: '/public'
 ```
+  
+It should match the directory used by express. E.g.: 
+```javascript
+app.use('/', express.static(path.join(__dirname, 'public')));
+```
 
 ### watchedDirectories (array)  
 Array of directories nested in `staticDir` to watch for images. The module is listening to requests pointing to this folders.  
+
+At least one directory has to be specified! 
   
 Using wildcards `*` is possible.  
 
