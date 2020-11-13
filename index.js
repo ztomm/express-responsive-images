@@ -133,6 +133,7 @@ module.exports = function (opts = {}) {
 				// create and cache image
 				sharp(originFilePath)
 					.resize(cacheFileWidth)
+					.withMetadata()
 					.toFile(cacheFilePath, (err, info) => {
 						if (err) {
 							debug(`red`, `(${reqFileName}) sharp faild to create file: ${err}`)
