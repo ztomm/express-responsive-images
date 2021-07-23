@@ -1,6 +1,6 @@
 {
 	"name": "express-responsive-images",
-	"version": "1.3.2",
+	"version": "1.3.3",
 	"description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
 	"main": "index.js",
 	"repository": {
@@ -24,7 +24,7 @@
 		"gif",
 		"png"
 	],
-	"author": "Murat Karaca <dev@muratkaraca.de> (https://www.kmgt.de)",
+	"author": "Murat Motz <dev@ztom.de> (https://www.kmgt.de)",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/xkmgt/express-responsive-images/issues"
