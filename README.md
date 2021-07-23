@@ -21,7 +21,7 @@ A minimal application to demonstrate this module can be found here:
 - cached images will be updated when origin image has been modified
 - debug mode, see process step-by-step in console
 
-## Real-World scenarios
+## example scenarios
 
 You have one (big) image as origin: `/public/images/desktop.jpg` (1920x1080px).  
   
