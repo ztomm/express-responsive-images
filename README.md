@@ -21,6 +21,22 @@ A minimal application to demonstrate this module can be found here:
 - cached images will be updated when origin image has been modified
 - debug mode, see process step-by-step in console
 
+## Real-World scenarios
+
+You have one (big) image as origin: `/public/images/desktop.jpg` (1920x1080px).  
+  
+Scenario 1 - desktop device width 1920px:  
+The clients device width is equal or even higher than 1920px. Everything is fine, the image will be delivered as usual.  
+  
+Scenario 2 - notebook device width 1280px:  
+The clients device width is smaller than the image above. The image will be scaled down to 1280px (one time) and cached in `/images-cache/1280/desktop.jpg`. Other devices with same resolution will surf the cached file.
+  
+Scenario 3 - mobile device width 320px and a densitiy of 1.5:  
+The above image will be scaled to 480px (320 x 1.5) and cached in `/public/images-cache/480/desktop.jpg`.  
+  
+Scenario 4 - direct scaling:  
+You need the image in 200px regardless of the clients device width. Get it with `/public/images/desktop.jpg?w=200`. See the options `directScaling` and `directScaleSizes` to enable this feature.
+
 ## install
 
 ```bash
@@ -37,7 +53,6 @@ npm i express-responsive-images --save
     <script>document.cookie = 'screen=' + ('devicePixelRatio' in window ? devicePixelRatio : 1) + ',' + window.innerWidth + '; path=/';</script>
 </head>
 ```
-See other strategies down below.
 
 ### backend
 
@@ -56,22 +71,6 @@ app.use(responsiveImages({
 app.use('/', express.static(path.join(__dirname, 'public')));
 ```
 
-## Real-World scenarios
-
-You have one (big) image as origin: `/public/images/desktop.jpg` (1920x1080px).  
-  
-Scenario 1 - desktop device width 1920px:  
-The clients device width is equal or even higher than 1920px. Everything is fine, the image will be delivered as usual.  
-  
-Scenario 2 - notebook device width 1280px:  
-The clients device width is smaller than the image above. The image will be scaled down to 1280px (one time) and cached in `/images-cache/1280/desktop.jpg`. Other devices with same resolution will surf the cached file.
-  
-Scenario 3 - mobile device width 320px and a densitiy of 1.5:  
-The above image will be scaled to 480px (320 x 1.5) and cached in `/public/images-cache/480/desktop.jpg`.  
-  
-Scenario 4 - direct scaling:  
-You need the image in 200px regardless of the clients device width. Get it with `/public/images/desktop.jpg?w=200`. See the options `directScaling` and `directScaleSizes` to enable this feature.
-  
 ## options (default values)
 By default images are scaled to a specified list of sizes (option `scaleBy: 'breakpoint'`).  
   
