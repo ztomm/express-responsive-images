@@ -1,5 +1,5 @@
 # express-responsive-images
-
+ 
 Server-side scaling and caching images on-the-fly for express on Node.js.  
 
 Adapted images to clients screen size or scaled by query parameter.  
