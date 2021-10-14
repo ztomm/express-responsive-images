@@ -1,9 +1,11 @@
 # express-responsive-images
 
 Server-side scaling and caching images on-the-fly for express on Node.js.  
-  
-Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time. 
 
+Adapted images to clients screen size or scaled by query parameter (i.e. ?w=200).  
+
+Mobile friendly, reducing bandwidth and saving load time.  
+ 
 [express-responsive-images on npmjs.org](https://www.npmjs.com/package/express-responsive-images)  
 
 A minimal application to demonstrate this module can be found here:  
@@ -14,7 +16,7 @@ A minimal application to demonstrate this module can be found here:
 **Features**
 - scaling and caching by breakpoints
 - scaling and caching depending on browser width
-- direct scaling
+- direct scaling by query parameter
 - filetype conversion, e.g. webp
 - define watched directories
 - define supported filetypes
@@ -53,6 +55,7 @@ npm i express-responsive-images --save
     <script>document.cookie = 'screen=' + ('devicePixelRatio' in window ? devicePixelRatio : 1) + ',' + window.innerWidth + '; path=/';</script>
 </head>
 ```
+(not necessary for `directScaling`)
 
 ### backend
 
@@ -182,13 +185,13 @@ breakpoints: [320, 480, 640, 800, 1024, 1280, 1366, 1440, 1600, 1920, 2048, 2560
 ```
 
 ### directScaling (boolean)  
-`directScaling` and `directScaleSizes` is used to scale images directly if the query parameter `w` is set.  
+`directScaling` and `directScaleSizes` is used to scale images directly if query parameter `w` is set.  
   
 Example `images/img.jpg?w=180` scales img.jpg to 180px in width and caches it in `images-cache/180/img.jpg`.  
   
 The query parameter is by default `w`, e.g. `img.jpg?w=180`. The value is the width in pixels. The parameter name is changable with the option `directScalingParam`.  
   
-(`scaleBy` is ignored when `directScaling: true` and parameter `w` is send.)
+(`scaleBy` is ignored when `directScaling: true` and parameter `w` is sent.)
 
 ```javascript
 directScaling: false

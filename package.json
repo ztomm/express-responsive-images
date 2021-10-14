@@ -1,7 +1,7 @@
 {
 	"name": "express-responsive-images",
-	"version": "1.3.3",
-	"description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size, mobile friendly, reducing bandwidth and saving load time.",
+	"version": "1.4.0",
+	"description": "Server-side scaling and caching images on-the-fly for express on Node.js. Adapted images to clients screen size or scaled by query parameter (i.e. ?w=200). Mobile friendly, reducing bandwidth and saving load time.",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
@@ -30,10 +30,10 @@
 		"url": "https://github.com/xkmgt/express-responsive-images/issues"
 	},
 	"dependencies": {
-		"chalk": "^4.1.0",
+		"chalk": "^4.1.2",
 		"fs-extra": "^10.0.0",
 		"image-size": "^1.0.0",
-		"sharp": "^0.28.3"
+		"sharp": "^0.29.1"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"

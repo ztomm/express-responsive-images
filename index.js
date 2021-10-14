@@ -92,15 +92,16 @@ module.exports = function (opts = {}) {
 		debug(`green`, `(${requestFileName}) requested file: ${path.basename(requestUrl)}`)
 
 		// declare some vars
-		var newImageWidth = 1                             // will become e.g. '1280'
+		var newImageWidth = 1                           // will become e.g. '1280'
 		var originFilePath = path.join(process.cwd(), options.staticDir + requestUrl) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images/subdir/image.jpg'
 		var reqFileName = requestFileName               // e.g. 'image.jpg'
 		var reqFileType = reqFileName.split('.').pop()  // e.g. '.jpg'
 		var newFileType = ''                            // can become e.g. '.webp'
-		var newFilePath = ''  							// will become e.g. '/images-cache/1280/image.jpg'
-		var cacheFilePath = ''                            // will become e.g. '<FILESYSTEMPATH>/<PROJECT>/images-cache/1280/image.jpg'
-		var cacheFileWidth = 0                             // will become e.g. '1280'
+		var newFilePath = ''  													// will become e.g. '/images-cache/1280/image.jpg'
+		var cacheFilePath = ''                          // will become e.g. '<FILESYSTEMPATH>/<PROJECT>/images-cache/1280/image.jpg'
+		var cacheFileWidth = 0                          // will become e.g. '1280'
 		var cacheDirPath = path.join(process.cwd(), options.staticDir + path.dirname(requestUrl) + options.cacheSuffix) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images-cache', will become e.g.: '<FILESYSTEMPATH>/<PROJECT>/public/images-cache/1280'
+		var deviceParameters = []; 											// array: deviceParameters[2] = device-density, deviceParameters[3] = device-width
 
 		// is image corrupted ?
 		var isImageCorrupted = (imagePath) => {
@@ -190,20 +191,28 @@ module.exports = function (opts = {}) {
 		// does cookie exists ?
 		if (req.headers.cookie) {
 			var cookies = req.headers.cookie + ';'
-			var deviceParameters = cookies.match(new RegExp(`(^|;| )${options.cookieName}=([^,]+),([^;]+)`))
+			deviceParameters = cookies.match(new RegExp(`(^|;| )${options.cookieName}=([^,]+),([^;]+)`))
 			// deviceParameters[2] = density, deviceParameters[3] = width
 		}
 		else {
-			debug(`red`, `(${reqFileName}) no cookie in requested headers`)
-			return next()
+			// make directScaling possible when cookie is missing
+			if (options.directScaling && requestQueryW > 0) {
+				deviceParameters[2] = 1; // guess density
+				deviceParameters[3] = 1; // dummy value
+				debug(`orange`, `(${reqFileName}) no cookies sent but directScaling active`)
+			}
+			else {
+				debug(`red`, `(${reqFileName}) no cookie in requested headers`)
+				return next()
+			}
 		}
-		if (deviceParameters) {
+		if (deviceParameters.length) {
 			// calculate new image width
 			newImageWidth = Math.round(deviceParameters[2] * deviceParameters[3])
 			debug(`green`, `(${reqFileName}) cookie "${options.cookieName}" is set: density=${deviceParameters[2]}, width=${deviceParameters[3]}`)
 		}
 		else {
-			debug(`red`, `(${reqFileName}) cookie "${options.cookieName}" does not exists`)
+			debug(`red`, `(${reqFileName}) deviceParameters not set`)
 			return next()
 		}
 
