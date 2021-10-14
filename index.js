@@ -1,6 +1,6 @@
 /*!
  * express-responsive-images
- * Copyright(c) 2019 Murat Karaca
+ * Copyright(c) 2021 Murat Motz
  * MIT Licensed
  * https://github.com/xkmgt/express-responsive-images
  */
