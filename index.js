@@ -1,6 +1,6 @@
 /*!
  * express-responsive-images
- * Copyright(c) 2021 Murat Motz
+ * Copyright(c) 2022 Murat Motz
  * MIT Licensed
  * https://github.com/ztomm/express-responsive-images
  */
