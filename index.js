@@ -2,7 +2,7 @@
  * express-responsive-images
  * Copyright(c) 2021 Murat Motz
  * MIT Licensed
- * https://github.com/xkmgt/express-responsive-images
+ * https://github.com/ztomm/express-responsive-images
  */
 
 'use strict'
@@ -31,7 +31,7 @@ var moduleName = 'express-responsive-images'
  */
 
 module.exports = function (opts = {}) {
-	// options documented under https://github.com/xkmgt/express-responsive-images
+	// options documented under https://github.com/ztomm/express-responsive-images
 	var options = {
 		staticDir: '',
 		watchedDirectories: ['/images'],
