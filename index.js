@@ -191,19 +191,22 @@ module.exports = function (opts = {}) {
 		// does cookie exists ?
 		if (req.headers.cookie) {
 			var cookies = req.headers.cookie + ';'
-			deviceParameters = cookies.match(new RegExp(`(^|;| )${options.cookieName}=([^,]+),([^;]+)`))
+			deviceParameters = cookies.match(new RegExp(`(^|;| )${options.cookieName}=([^,]+),([^;]+)`)) || []
 			// deviceParameters[2] = density, deviceParameters[3] = width
+			if (!deviceParameters.length)
+				debug(`orange`, `(${reqFileName}) cookies sent but module cookie not found`)
 		}
 		else {
-			// make directScaling possible when cookie is missing
+			debug(`red`, `(${reqFileName}) no cookie in headers`)
+			return next()
+		}
+		// no cookies sent or module cookie not found
+		if (!req.headers.cookie || !deviceParameters.length) {
+			// take care for directScaling is active and cookie is missing
 			if (options.directScaling && requestQueryW > 0) {
 				deviceParameters[2] = 1; // guess density
 				deviceParameters[3] = 1; // dummy value
-				debug(`orange`, `(${reqFileName}) no cookies sent but directScaling active`)
-			}
-			else {
-				debug(`red`, `(${reqFileName}) no cookie in requested headers`)
-				return next()
+				debug(`orange`, `(${reqFileName}) no cookies sent but directScaling is active`)
 			}
 		}
 		if (deviceParameters.length) {
