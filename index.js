@@ -249,7 +249,7 @@ module.exports = function (opts = {}) {
 		if (options.fileTypeConversion !== '' && options.fileTypeConversion !== reqFileType) {
 			fileTypeConversion = true
 			// check if client accepts webp
-			if (options.fileTypeConversion === 'webp' && req.headers.accept || ''.toLowerCase().indexOf('image/webp') === -1) {
+			if (options.fileTypeConversion === 'webp' && (req.headers.accept || ''.toLowerCase()).indexOf('image/webp') === -1) {
 				debug(`orange`, `(${reqFileName}) filetype "webp" is not accepted by client`)
 				fileTypeConversion = false
 			}
