@@ -193,12 +193,13 @@ module.exports = function (opts = {}) {
 			var cookies = req.headers.cookie + ';'
 			deviceParameters = cookies.match(new RegExp(`(^|;| )${options.cookieName}=([^,]+),([^;]+)`)) || []
 			// deviceParameters[2] = density, deviceParameters[3] = width
-			if (!deviceParameters.length)
+			if (deviceParameters.length)
+				debug(`green`, `(${reqFileName}) cookie "${options.cookieName}" is set: density=${deviceParameters[2]}, width=${deviceParameters[3]}`)
+			else 
 				debug(`orange`, `(${reqFileName}) cookies sent but module cookie not found`)
 		}
 		else {
 			debug(`red`, `(${reqFileName}) no cookie in headers`)
-			return next()
 		}
 		// no cookies sent or module cookie not found
 		if (!req.headers.cookie || !deviceParameters.length) {
@@ -212,10 +213,9 @@ module.exports = function (opts = {}) {
 		if (deviceParameters.length) {
 			// calculate new image width
 			newImageWidth = Math.round(deviceParameters[2] * deviceParameters[3])
-			debug(`green`, `(${reqFileName}) cookie "${options.cookieName}" is set: density=${deviceParameters[2]}, width=${deviceParameters[3]}`)
 		}
 		else {
-			debug(`red`, `(${reqFileName}) deviceParameters not set`)
+			debug(`red`, `(${reqFileName}) deviceParameters still not set`)
 			return next()
 		}
 
@@ -224,7 +224,7 @@ module.exports = function (opts = {}) {
 		if (options.directScaling && requestQueryW > 0) {
 			if (!options.directScaleSizes.length || (options.directScaleSizes.length && options.directScaleSizes.includes(requestQueryW))) {
 				// calculate new image width
-				newImageWidth = Math.round(requestQueryW * deviceParameters[2])
+				newImageWidth = Math.round(requestQueryW * (deviceParameters[2] || 1))
 				directScale = true
 			}
 			else {
