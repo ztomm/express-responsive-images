@@ -122,30 +122,24 @@ module.exports = function (opts = {}) {
 		}
 
 		// create scaled image
-		var createCacheFile = () => {
+		var createCacheFile = async () => {
 			// create directory if needed
-			fs.ensureDir(cacheDirPath, err => {
-				if (err) {
-					debug(`red`, `(${reqFileName}) failed to create caching directory: ${cacheFilePath}`)
-					return next()
-				}
-				// disable sharp to cache files
-				sharp.cache(false)
-				// create and cache image
-				sharp(originFilePath)
+			fs.ensureDirSync(cacheDirPath)
+			// disable sharp to cache files
+			sharp.cache(false)
+			// create and cache image
+			try {
+				await sharp(originFilePath)
 					.resize(cacheFileWidth)
 					.withMetadata()
-					.toFile(cacheFilePath, (err, info) => {
-						if (err) {
-							debug(`red`, `(${reqFileName}) sharp faild to create file: ${err}`)
-							return next()
-						}
-						else {
-							debug(`green`, `(${reqFileName}) image scaled and created: ${cacheFilePath}`)
-							return sendCachedFile()
-						}
-					})
-			})
+					.toFile(cacheFilePath)
+			}
+			catch(err) {
+				debug(`red`, `(${reqFileName}) sharp faild to create file: ${err}`)
+				return next()
+			}
+			debug(`green`, `(${reqFileName}) image scaled and created: ${cacheFilePath}`)
+			return sendCachedFile()
 		}
 
 		// lookup image in cache / delete outdated / create it / send it

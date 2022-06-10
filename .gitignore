@@ -1,6 +1,11 @@
 ##############################################################
 # Custom
 
+# dotenv environment variable files
+.env
+.env.*
+.env-*
+
 # temp, cache, backup
 tmp
 public/*cache
