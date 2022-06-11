@@ -8,35 +8,22 @@ Mobile friendly, reduces bandwidth and saves loading time.
 
 [express-responsive-images on npmjs.org](https://www.npmjs.com/package/express-responsive-images)
 
-A minimal application demonstrating this module can be found here: [github/express-responsive-images-demo](https://github.com/ztomm/express-responsive-images-demo)
+Demo application: [github/express-responsive-images-demo](https://github.com/ztomm/express-responsive-images-demo)
 
 ![express-responsive-images](https://raw.githubusercontent.com/ztomm/express-responsive-images/master/express-responsive-images.png)
 
-**Scaling**
-- by breakpoint (default)
-- by browser width
-- by query parameter (usefull for `srcset`)
-
-**Features**
-- file type conversion (e.g. jpeg to webp)
-- define watched directories
-- define supported file types
-- cache is updated when image is modified
-- debug mode: see process step-by-step in console
-
-## install
+## usage
 
 ````bash
-npm i express-responsive-images --save
+npm i express-responsive-images
 ````
-
-## usage
 
 **frontend**
 
+We send the screen size to the server with a technical cookie (not necessary for `directScaling`). 
 ````javascript
 <head>
-    // somewhere in <head> section (not necessary for directScaling)
+    // somewhere in <head> section 
     <script>document.cookie = 'screen=' + ('devicePixelRatio' in window ? devicePixelRatio : 1) + ',' + window.innerWidth + '; path=/; SameSite=strict; Secure';</script>
 </head>
 ````
@@ -57,8 +44,22 @@ app.use(responsiveImages({
 // static routes, something like this:
 app.use('/', express.static(path.join(__dirname, 'public')));
 ````
+That's all. The default behavior should already work. If `staticDir` and `watchedDirectories` are set correctly, the images should be delivered, not much larger than the screen size of the client. The folders of `watchedDirectories` should then also contain chached files.
 
 ## options (default values)
+
+**Scaling**
+- by breakpoint (default)
+- by browser width
+- by query parameter (usefull for `srcset`)
+
+**Features**
+- file type conversion (e.g. jpeg to webp)
+- define watched directories
+- define supported file types
+- cache is updated when image is modified
+- debug mode: see process step-by-step in console
+
 By default images are scaled to a specified list of sizes (option `scaleBy: 'breakpoint'`).
   
 If you want, you can configure it to cache images for every possible viewport width (option `scaleBy: 'viewport'`). However, this is not recommended for public websites, as it can bloat the web space.
