@@ -1,6 +1,6 @@
 {
 	"name": "express-responsive-images",
-	"version": "1.6.1",
+	"version": "1.6.2",
 	"description": "Server-side scaling and caching of images on-the-fly for Express on Node.js. Adjusting images to client's screen size or scaling by query parameters (e.g. ?w=200). Mobile friendly, reduces bandwidth and saves loading time.",
 	"main": "index.js",
 	"repository": {
@@ -11,18 +11,9 @@
 		"responsive",
 		"images",
 		"server-side",
-		"adaptive",
 		"cached",
 		"on-the-fly",
-		"node.js",
-		"express",
-		"connect",
-		"middleware",
-		"webp",
-		"jpg",
-		"jpeg",
-		"gif",
-		"png"
+		"express"
 	],
 	"author": "Murat Motz <dev@ztom.de> (https://www.kmgt.de)",
 	"license": "MIT",
@@ -32,8 +23,8 @@
 	"dependencies": {
 		"chalk": "^4.1.2",
 		"fs-extra": "^10.1.0",
-		"image-size": "^1.0.1",
-		"sharp": "^0.30.6"
+		"image-size": "^1.0.2",
+		"sharp": "^0.30.7"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
