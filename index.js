@@ -12,7 +12,7 @@
  * @private
  */
 
-var chalk = require('chalk')
+var pc = require('picocolors')
 var fs = require('fs-extra')
 var imageSize = require('image-size')
 var path = require('path')
@@ -51,7 +51,7 @@ module.exports = function (opts = {}) {
 	// log errors and events to console
 	var debug = (color, message) => {
 		if (options.debug)
-			console.log(`${moduleName}: ${chalk.keyword(color)(message)}`)
+			console.log(`${moduleName}: ${pc[color](message)}`)
 	}
 
 	return (req, res, next) => {
@@ -63,7 +63,7 @@ module.exports = function (opts = {}) {
 		var requestFileName = path.basename(requestUrl)     // e.g. 'image.jpg'
 		var requestQueryW = parseInt(urlObj.query[options.directScalingParam]) || 0 // e.g. 200
 
-		debug(`pink`, `${req.url} --------------------------------------`)
+		debug(`magenta`, `${req.url} --------------------------------------`)
 
 		// at least one watched directory has to be specified
 		if (!options.watchedDirectories.length) {
@@ -85,7 +85,7 @@ module.exports = function (opts = {}) {
 		}
 		if (!validPath) {
 			// request is something else, get out of this module !
-			debug(`orange`, `(${requestFileName}) requested directory is not in watchlist: ${requestPath}`)
+			debug(`yellow`, `(${requestFileName}) requested directory is not in watchlist: ${requestPath}`)
 			return next()
 		}
 
@@ -146,7 +146,7 @@ module.exports = function (opts = {}) {
 		var prepareResponse = () => {
 			if (fs.existsSync(cacheFilePath)) {
 				if (fs.statSync(originFilePath).mtime.getTime() > fs.statSync(cacheFilePath).mtime.getTime()) {
-					debug(`orange`, `(${reqFileName}) cached image is stale and will be removed: ${cacheFilePath}`)
+					debug(`yellow`, `(${reqFileName}) cached image is stale and will be removed: ${cacheFilePath}`)
 					// origin image was modified, delete cached image, 
 					fs.unlinkSync(cacheFilePath)
 					// create it again, send it
@@ -159,7 +159,7 @@ module.exports = function (opts = {}) {
 				}
 			}
 			// cached image does not exists, create and send it
-			debug(`orange`, `(${reqFileName}) requested image is not in cache: ${cacheFilePath}`)
+			debug(`yellow`, `(${reqFileName}) requested image is not in cache: ${cacheFilePath}`)
 			return createCacheFile()
 		}
 
@@ -169,7 +169,7 @@ module.exports = function (opts = {}) {
 			debug(`green`, `(${reqFileName}) filetype is supported: ${reqFileType}`)
 		}
 		else {
-			debug(`orange`, `(${reqFileName}) filetype is not supported: ${reqFileType}`)
+			debug(`yellow`, `(${reqFileName}) filetype is not supported: ${reqFileType}`)
 			return next()
 		}
 
@@ -190,7 +190,7 @@ module.exports = function (opts = {}) {
 			if (deviceParameters.length)
 				debug(`green`, `(${reqFileName}) cookie "${options.cookieName}" is set: density=${deviceParameters[2]}, width=${deviceParameters[3]}`)
 			else 
-				debug(`orange`, `(${reqFileName}) cookies sent but module cookie not found`)
+				debug(`yellow`, `(${reqFileName}) cookies sent but module cookie not found`)
 		}
 		else {
 			debug(`red`, `(${reqFileName}) no cookie in headers`)
@@ -201,7 +201,7 @@ module.exports = function (opts = {}) {
 			if (options.directScaling && requestQueryW > 0) {
 				deviceParameters[2] = 1; // guess density
 				deviceParameters[3] = 1; // dummy value
-				debug(`orange`, `(${reqFileName}) no cookies sent but directScaling is active`)
+				debug(`yellow`, `(${reqFileName}) no cookies sent but directScaling is active`)
 			}
 		}
 		if (deviceParameters.length) {
@@ -222,12 +222,12 @@ module.exports = function (opts = {}) {
 				directScale = true
 			}
 			else {
-				debug(`orange`, `(${reqFileName}) image size not listed in directScaleSizes: ${requestQueryW}`)
+				debug(`yellow`, `(${reqFileName}) image size not listed in directScaleSizes: ${requestQueryW}`)
 				return next()
 			}
 		}
 		if (!options.directScaling && requestQueryW > 0) {
-			debug(`orange`, `(${reqFileName}) direct scaling is not enabled`)
+			debug(`yellow`, `(${reqFileName}) direct scaling is not enabled`)
 		}
 
 		// be sure new image width is a legal number
@@ -244,7 +244,7 @@ module.exports = function (opts = {}) {
 			fileTypeConversion = true
 			// check if client accepts webp
 			if (options.fileTypeConversion === 'webp' && (req.headers.accept || ''.toLowerCase()).indexOf('image/webp') === -1) {
-				debug(`orange`, `(${reqFileName}) filetype "webp" is not accepted by client`)
+				debug(`yellow`, `(${reqFileName}) filetype "webp" is not accepted by client`)
 				fileTypeConversion = false
 			}
 			// set new filetype
@@ -256,10 +256,10 @@ module.exports = function (opts = {}) {
 
 		// return if image is smaller than newImageWidth
 		if (newImageWidth >= imageSize(originFilePath).width) {
-			debug(`orange`, `(${reqFileName}) origin image is smaller than new image width`)
+			debug(`yellow`, `(${reqFileName}) origin image is smaller than new image width`)
 			// if fileTypeConversion
 			if (fileTypeConversion) {
-				debug(`orange`, `(${reqFileName}) preparing fileTypeConversion`)
+				debug(`yellow`, `(${reqFileName}) preparing fileTypeConversion`)
 				cacheFilePath = path.join(cacheDirPath, reqFileName + newFileType)
 				cacheFileWidth = imageSize(originFilePath).width
 				newFilePath = path.dirname(requestUrl) + options.cacheSuffix + '/' + reqFileName + newFileType
@@ -288,7 +288,7 @@ module.exports = function (opts = {}) {
 			options.breakpoints = options.breakpoints.sort((a, b) => a - b)
 			// check if device is greater than highest breakpoint
 			if (newImageWidth > breakpointMax) {
-				debug(`orange`, `(${reqFileName}) highest breakpoint (${breakpointMax}) is smaller than new image width (${newImageWidth})`)
+				debug(`yellow`, `(${reqFileName}) highest breakpoint (${breakpointMax}) is smaller than new image width (${newImageWidth})`)
 				return next()
 			}
 			else {
