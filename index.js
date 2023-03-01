@@ -1,6 +1,6 @@
 /*!
  * express-responsive-images
- * Copyright(c) 2022 Murat Motz
+ * Copyright(c) 2023 Murat Motz
  * MIT Licensed
  * https://github.com/ztomm/express-responsive-images
  */
@@ -9,71 +9,69 @@
 
 /**
  * Module dependencies
- * @private
+ * ----------------------------------------------------------
  */
 
-var pc = require('picocolors')
-var fs = require('fs-extra')
-var imageSize = require('image-size')
-var path = require('path')
-var sharp = require('sharp')
-var url = require('url')
+const fs        = require('fs-extra')
+const imageSize = require('image-size')
+const path      = require('path')
+const pc        = require('picocolors')
+const sharp     = require('sharp')
+const url       = require('url')
 
-/**
- * Module variables
- * @private
- */
-
-var moduleName = 'express-responsive-images'
 
 /**
  * Module
+ * ----------------------------------------------------------
  */
 
-module.exports = function (opts = {}) {
-	// options documented under https://github.com/ztomm/express-responsive-images
-	var options = {
-		staticDir: '',
-		watchedDirectories: ['/images'],
-		fileTypes: ['webp', 'jpg', 'jpeg', 'png', 'gif'],
-		fileTypeConversion: '',
-		cacheSuffix: '-cache',
-		cookieName: 'screen',
-		scaleBy: 'breakpoint',
-		breakpoints: [320, 480, 640, 800, 1024, 1280, 1366, 1440, 1600, 1920, 2048, 2560, 3440, 4096],
-		directScaling: false,
-		directScalingParam: 'w',
-		directScaleSizes: [],
-		debug: false,
-		...opts // assign user options to default options
+module.exports = function expressResponsiveImages(options) {
+
+	options = options || {}
+
+	// Documentation for the options under https://github.com/ztomm/express-responsive-images
+	options = {
+		staticDir          : '',
+		watchedDirectories : ['/images'],
+		fileTypes          : ['webp', 'jpg', 'jpeg', 'png', 'gif'],
+		fileTypeConversion : '',
+		cacheSuffix        : '-cache',
+		cookieName         : 'screen',
+		scaleBy            : 'breakpoint',
+		breakpoints        : [320, 480, 640, 800, 1024, 1280, 1366, 1440, 1600, 1920, 2048, 2560, 3440, 4096],
+		directScaling      : false,
+		directScalingParam : 'w',
+		directScaleSizes   : [],
+		debug              : false,
+		...options // assign user options to default options
 	}
 
 	// log errors and events to console
-	var debug = (color, message) => {
+	const debug = (color, message) => {
 		if (options.debug)
-			console.log(`${moduleName}: ${pc[color](message)}`)
+			console.log(`'express-responsive-images': ${pc[color](message)}`)
 	}
 
 	return (req, res, next) => {
 
 		// declare requested url parts
-		var urlObj = url.parse(req.url, true)      // e.g. req.url = /media/subdir/image.jpg?w=200
-		var requestUrl = urlObj.pathname               // e.g. /media/subdir/image.jpg
-		var requestPath = path.dirname(urlObj.pathname) // e.g. /media/subdir
-		var requestFileName = path.basename(requestUrl)     // e.g. 'image.jpg'
-		var requestQueryW = parseInt(urlObj.query[options.directScalingParam]) || 0 // e.g. 200
+		let urlObj          = url.parse(req.url, true)      // e.g. req.url = /media/subdir/image.jpg?w=200
+		let requestUrl      = urlObj.pathname               // e.g. /media/subdir/image.jpg
+		let requestPath     = path.dirname(urlObj.pathname) // e.g. /media/subdir
+		let requestFileName = path.basename(requestUrl)     // e.g. 'image.jpg'
+		let requestQueryW   = parseInt(urlObj.query[options.directScalingParam]) || 0 // e.g. 200
 
-		debug(`magenta`, `${req.url} --------------------------------------`)
+		debug(`yellow`, `${req.url} --------------------------------------`)
 
 		// at least one watched directory has to be specified
 		if (!options.watchedDirectories.length) {
-			debug(`red`, `(${requestFileName}) there is not any directory specified to watch!`)
+			debug(`red`, `(${requestFileName}) no directory specified in watchlist!`)
 			return next()
 		}
 
 		// is requested path in list of watching directories ?
-		var validPath = false
-		for (var dir of options.watchedDirectories) {
+		let validPath = false
+		for (let dir of options.watchedDirectories) {
 			// wildcards in pattern
 			if (dir.includes('*'))
 				dir = dir.replace(/\*/g, '[^/].*')
@@ -85,26 +83,26 @@ module.exports = function (opts = {}) {
 		}
 		if (!validPath) {
 			// request is something else, get out of this module !
-			debug(`yellow`, `(${requestFileName}) requested directory is not in watchlist: ${requestPath}`)
+			debug(`magenta`, `(${requestFileName}) requested directory is not in watchlist: ${requestPath}`)
 			return next()
 		}
 
 		debug(`green`, `(${requestFileName}) requested file: ${path.basename(requestUrl)}`)
 
 		// declare some vars
-		var newImageWidth = 1                           // will become e.g. '1280'
-		var originFilePath = path.join(process.cwd(), options.staticDir + requestUrl) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images/subdir/image.jpg'
-		var reqFileName = requestFileName               // e.g. 'image.jpg'
-		var reqFileType = reqFileName.split('.').pop()  // e.g. '.jpg'
-		var newFileType = ''                            // can become e.g. '.webp'
-		var newFilePath = ''  													// will become e.g. '/images-cache/1280/image.jpg'
-		var cacheFilePath = ''                          // will become e.g. '<FILESYSTEMPATH>/<PROJECT>/images-cache/1280/image.jpg'
-		var cacheFileWidth = 0                          // will become e.g. '1280'
-		var cacheDirPath = path.join(process.cwd(), options.staticDir + path.dirname(requestUrl) + options.cacheSuffix) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images-cache', will become e.g.: '<FILESYSTEMPATH>/<PROJECT>/public/images-cache/1280'
-		var deviceParameters = []; 											// array: deviceParameters[2] = device-density, deviceParameters[3] = device-width
+		let newImageWidth    = 1                             // will become e.g. '1280'
+		let originalFilePath = path.join(process.cwd(), options.staticDir + requestUrl) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images/subdir/image.jpg'
+		let reqFileName      = requestFileName               // e.g. 'image.jpg'
+		let reqFileType      = reqFileName.split('.').pop()  // e.g. '.jpg'
+		let newFileType      = ''                            // can become e.g. '.webp'
+		let newFilePath      = ''  													 // will become e.g. '/images-cache/1280/image.jpg'
+		let cacheFilePath    = ''                            // will become e.g. '<FILESYSTEMPATH>/<PROJECT>/images-cache/1280/image.jpg'
+		let cacheFileWidth   = 0                             // will become e.g. '1280'
+		let cacheDirPath     = path.join(process.cwd(), options.staticDir + path.dirname(requestUrl) + options.cacheSuffix) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images-cache', will become e.g.: '<FILESYSTEMPATH>/<PROJECT>/public/images-cache/1280'
+		let deviceParameters = [] 											     // array: deviceParameters[2] = device-density, deviceParameters[3] = device-width
 
 		// is image corrupted ?
-		var isImageCorrupted = (imagePath) => {
+		const isImageCorrupted = (imagePath) => {
 			try {
 				imageSize(imagePath)
 				return false
@@ -115,27 +113,27 @@ module.exports = function (opts = {}) {
 		}
 
 		// change requested url and return
-		var sendCachedFile = () => {
+		const sendCachedFile = () => {
 			req.url = newFilePath
 			debug(`green`, `(${reqFileName}) requested url updated to ${req.url}`)
 			return next()
 		}
 
 		// create scaled image
-		var createCacheFile = async () => {
+		const createCacheFile = async () => {
 			// create directory if needed
 			fs.ensureDirSync(cacheDirPath)
 			// disable sharp to cache files
 			sharp.cache(false)
 			// create and cache image
 			try {
-				await sharp(originFilePath)
+				await sharp(originalFilePath)
 					.resize(cacheFileWidth)
 					.withMetadata()
 					.toFile(cacheFilePath)
 			}
 			catch(err) {
-				debug(`red`, `(${reqFileName}) sharp faild to create file: ${err}`)
+				debug(`red`, `(${reqFileName}) sharp error when creating the file: ${err}`)
 				return next()
 			}
 			debug(`green`, `(${reqFileName}) image scaled and created: ${cacheFilePath}`)
@@ -143,11 +141,11 @@ module.exports = function (opts = {}) {
 		}
 
 		// lookup image in cache / delete outdated / create it / send it
-		var prepareResponse = () => {
+		const prepareResponse = () => {
 			if (fs.existsSync(cacheFilePath)) {
-				if (fs.statSync(originFilePath).mtime.getTime() > fs.statSync(cacheFilePath).mtime.getTime()) {
-					debug(`yellow`, `(${reqFileName}) cached image is stale and will be removed: ${cacheFilePath}`)
-					// origin image was modified, delete cached image, 
+				if (fs.statSync(originalFilePath).mtime.getTime() > fs.statSync(cacheFilePath).mtime.getTime()) {
+					debug(`blue`, `(${reqFileName}) cached image is stale and will be removed: ${cacheFilePath}`)
+					// original image was modified, delete cached image, 
 					fs.unlinkSync(cacheFilePath)
 					// create it again, send it
 					return createCacheFile()
@@ -159,49 +157,50 @@ module.exports = function (opts = {}) {
 				}
 			}
 			// cached image does not exists, create and send it
-			debug(`yellow`, `(${reqFileName}) requested image is not in cache: ${cacheFilePath}`)
+			debug(`magenta`, `(${reqFileName}) requested image is not in cache: ${cacheFilePath}`)
 			return createCacheFile()
 		}
 
 		// is filetype supported ?
 		options.fileTypes = options.fileTypes.map(x => x.toLowerCase())
 		if (options.fileTypes.includes(reqFileType.toLowerCase())) {
-			debug(`green`, `(${reqFileName}) filetype is supported: ${reqFileType}`)
+			debug(`green`, `(${reqFileName}) filetype is permitted: ${reqFileType}`)
 		}
 		else {
-			debug(`yellow`, `(${reqFileName}) filetype is not supported: ${reqFileType}`)
+			debug(`magenta`, `(${reqFileName}) filetype is not permitted: ${reqFileType}`)
 			return next()
 		}
 
-		// does origin image exists ?
-		if (!fs.existsSync(originFilePath)) {
-			debug(`red`, `(${reqFileName}) origin image does not exists`)
+		// does original image exists ?
+		if (!fs.existsSync(originalFilePath)) {
+			debug(`red`, `(${reqFileName}) original image does not exists`)
 			return next()
 		}
 
-		// origin image corrupted ?
-		if (isImageCorrupted(originFilePath)) return next()
+		// original image corrupted ?
+		if (isImageCorrupted(originalFilePath)) 
+			return next()
 
 		// does cookie exists ?
 		if (req.headers.cookie) {
-			var cookies = req.headers.cookie + ';'
+			let cookies = req.headers.cookie + ';'
 			deviceParameters = cookies.match(new RegExp(`(^|;| )${options.cookieName}=([^,]+),([^;]+)`)) || []
 			// deviceParameters[2] = density, deviceParameters[3] = width
 			if (deviceParameters.length)
 				debug(`green`, `(${reqFileName}) cookie "${options.cookieName}" is set: density=${deviceParameters[2]}, width=${deviceParameters[3]}`)
 			else 
-				debug(`yellow`, `(${reqFileName}) cookies sent but module cookie not found`)
+				debug(`magenta`, `(${reqFileName}) cookies sent but module cookie not found`)
 		}
 		else {
 			debug(`red`, `(${reqFileName}) no cookie in headers`)
 		}
 		// no cookies sent or module cookie not found
 		if (!req.headers.cookie || !deviceParameters.length) {
-			// take care for directScaling is active and cookie is missing
+			// support directScaling even if the cookie is missing
 			if (options.directScaling && requestQueryW > 0) {
-				deviceParameters[2] = 1; // guess density
-				deviceParameters[3] = 1; // dummy value
-				debug(`yellow`, `(${reqFileName}) no cookies sent but directScaling is active`)
+				deviceParameters[2] = 1 // guess density
+				deviceParameters[3] = 1 // dummy value
+				debug(`magenta`, `(${reqFileName}) no cookies sent (directScaling still possible)`)
 			}
 		}
 		if (deviceParameters.length) {
@@ -214,7 +213,7 @@ module.exports = function (opts = {}) {
 		}
 
 		// check for directScaling
-		var directScale = false
+		let directScale = false
 		if (options.directScaling && requestQueryW > 0) {
 			if (!options.directScaleSizes.length || (options.directScaleSizes.length && options.directScaleSizes.includes(requestQueryW))) {
 				// calculate new image width
@@ -222,12 +221,12 @@ module.exports = function (opts = {}) {
 				directScale = true
 			}
 			else {
-				debug(`yellow`, `(${reqFileName}) image size not listed in directScaleSizes: ${requestQueryW}`)
+				debug(`red`, `(${reqFileName}) image size is not permitted by directScaleSizes: ${requestQueryW}`)
 				return next()
 			}
 		}
 		if (!options.directScaling && requestQueryW > 0) {
-			debug(`yellow`, `(${reqFileName}) direct scaling is not enabled`)
+			debug(`red`, `(${reqFileName}) direct scaling is not enabled`)
 		}
 
 		// be sure new image width is a legal number
@@ -239,31 +238,31 @@ module.exports = function (opts = {}) {
 		debug(`green`, `(${reqFileName}) new image width is probably ${newImageWidth}`)
 
 		// convert filetypes
-		var fileTypeConversion = false
+		let fileTypeConversion = false
 		if (options.fileTypeConversion !== '' && options.fileTypeConversion !== reqFileType) {
 			fileTypeConversion = true
 			// check if client accepts webp
 			if (options.fileTypeConversion === 'webp' && (req.headers.accept || ''.toLowerCase()).indexOf('image/webp') === -1) {
-				debug(`yellow`, `(${reqFileName}) filetype "webp" is not accepted by client`)
+				debug(`red`, `(${reqFileName}) filetype "webp" is not accepted by client`)
 				fileTypeConversion = false
 			}
 			// set new filetype
 			if (fileTypeConversion) {
 				newFileType = `.${options.fileTypeConversion}`
-				debug(`green`, `(${reqFileName}) new filetype will be: ${newFileType}`)
+				debug(`green`, `(${reqFileName}) new filetype is: ${newFileType}`)
 			}
 		}
 
 		// return if image is smaller than newImageWidth
-		if (newImageWidth >= imageSize(originFilePath).width) {
-			debug(`yellow`, `(${reqFileName}) origin image is smaller than new image width`)
+		if (newImageWidth >= imageSize(originalFilePath).width) {
+			debug(`magenta`, `(${reqFileName}) original image is smaller than new image width`)
 			// if fileTypeConversion
 			if (fileTypeConversion) {
-				debug(`yellow`, `(${reqFileName}) preparing fileTypeConversion`)
+				debug(`magenta`, `(${reqFileName}) preparing fileTypeConversion`)
 				cacheFilePath = path.join(cacheDirPath, reqFileName + newFileType)
-				cacheFileWidth = imageSize(originFilePath).width
+				cacheFileWidth = imageSize(originalFilePath).width
 				newFilePath = path.dirname(requestUrl) + options.cacheSuffix + '/' + reqFileName + newFileType
-				return prepareResponse();
+				return prepareResponse()
 			}
 			else {
 				return next()
@@ -283,12 +282,12 @@ module.exports = function (opts = {}) {
 		// scaleBy breakpoint
 		else if (options.scaleBy === 'breakpoint') {
 			debug(`green`, `(${reqFileName}) scale by: breakpoint`)
-			var breakpointMax = Math.max(...options.breakpoints)
+			let breakpointMax = Math.max(...options.breakpoints)
 			// breakpoints in ascending order
 			options.breakpoints = options.breakpoints.sort((a, b) => a - b)
 			// check if device is greater than highest breakpoint
 			if (newImageWidth > breakpointMax) {
-				debug(`yellow`, `(${reqFileName}) highest breakpoint (${breakpointMax}) is smaller than new image width (${newImageWidth})`)
+				debug(`magenta`, `(${reqFileName}) highest breakpoint (${breakpointMax}) is smaller than new image width (${newImageWidth})`)
 				return next()
 			}
 			else {
@@ -302,7 +301,7 @@ module.exports = function (opts = {}) {
 			}
 		}
 
-		debug(`green`, `(${reqFileName}) image width should be: ${cacheFileWidth}`)
+		debug(`green`, `(${reqFileName}) new image width is: ${cacheFileWidth}`)
 
 		// cache directory
 		cacheDirPath = path.join(cacheDirPath, cacheFileWidth.toString())
@@ -312,7 +311,7 @@ module.exports = function (opts = {}) {
 		cacheFilePath = path.join(cacheDirPath, reqFileName + newFileType)
 
 		newFilePath = path.dirname(requestUrl) + options.cacheSuffix + '/' + cacheFileWidth.toString() + '/' + reqFileName + newFileType
-		return prepareResponse();
+		return prepareResponse()
 	}
 
 }

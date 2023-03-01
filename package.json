@@ -19,6 +19,9 @@
 	"bugs": {
 		"url": "https://github.com/ztomm/express-responsive-images/issues"
 	},
+	"peerDependencies": {
+    "express": ">=4.0.0"
+  },
 	"dependencies": {
 		"fs-extra": "^11.1.0",
 		"image-size": "^1.0.2",
