@@ -25,7 +25,7 @@ const url       = require('url')
  * ----------------------------------------------------------
  */
 
-module.exports = function expressResponsiveImages(options) {
+module.exports = function responsiveImages(options) {
 
 	options = options || {}
 
