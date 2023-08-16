@@ -12,7 +12,10 @@ public/*cache
 results
 
 # build
+dist
 public/dist/
+client-build
+server-build
 
 # files, archives
 # *.csv
@@ -31,6 +34,7 @@ bower_components
 # editors
 .idea
 .vscode
+*.code-workspace
 modules.xml
 *.iml
 *.ipr
