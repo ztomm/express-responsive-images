@@ -1,6 +1,6 @@
 {
 	"name": "express-responsive-images",
-	"version": "1.8.1",
+	"version": "1.8.2",
 	"description": "Server-side scaling and caching of images on-the-fly for Express on Node.js. Adjusting images to client's screen size or scaling by query parameters (e.g. ?w=200). Mobile friendly, reduces bandwidth and saves loading time.",
 	"main": "index.js",
 	"repository": {
@@ -20,13 +20,13 @@
 		"url": "https://github.com/ztomm/express-responsive-images/issues"
 	},
 	"peerDependencies": {
-		"express": ">=4.18.2"
+		"express": ">=4.0.0"
 	},
 	"dependencies": {
-		"fs-extra": "^11.1.1",
-		"image-size": "^1.0.2",
+		"fs-extra": "^11.2.0",
+		"image-size": "^1.1.1",
 		"picocolors": "^1.0.0",
-		"sharp": "^0.32.5"
+		"sharp": "^0.33.2"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
