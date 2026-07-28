@@ -4,21 +4,21 @@ Server-side scaling and caching of images on-the-fly for Express on Node.js ([np
 
 [Demo application](https://github.com/ztomm/express-responsive-images-demo) 
 
-**basic features**
+**Basic Features**
 - scaling by next breakpoint (default)
-- scaling by query parameter (usefull for `srcset`)
+- scaling by query parameter (useful for `srcset`)
 - filetype conversion (e.g. to webp)
 - cache is updated when image is modified
 
 ![express-responsive-images](https://raw.githubusercontent.com/ztomm/express-responsive-images/master/express-responsive-images.png)
 
-## usage
+## Usage
 
 ````bash
 npm i express-responsive-images
 ````
 
-**frontend**
+**Frontend**
 
 ````javascript
 <head>
@@ -27,7 +27,9 @@ npm i express-responsive-images
 ````
 (not necessary for `directScaling`)
 
-**backend**
+The `Secure` cookie attribute requires HTTPS (`SameSite=strict; Secure`). During local development you may want to omit it.
+
+**Backend**
 
 ````javascript
 import responsiveImages from 'express-responsive-images';
@@ -36,16 +38,16 @@ import responsiveImages from 'express-responsive-images';
 // use it before declaring static routes
 app.use(responsiveImages({
     staticDir: '/public',
-    watchedDirectories: ['/images', '/media'], // nested in staticDir
+    watchedDirectories: ['/images', '/media'], // relative to staticDir
     // options ...
 }));
 
 // static routes, something like this:
 app.use('/', express.static(path.join(__dirname, 'public')));
 ````
-That's all. The default behavior should already work. If `staticDir` and `watchedDirectories` are set correctly, the images should be delivered, not much larger than the screen size of the client. The folders of `watchedDirectories` should then also contain chached files.
+That's all. The default behavior should already work. If `staticDir` and `watchedDirectories` are set correctly, the images should be delivered, not much larger than the screen size of the client. Cache folders should then be created inside the watched directories.
 
-## options (default values)
+## Options (default values)
 
 ````javascript
 app.use(responsiveImages({
@@ -65,7 +67,7 @@ app.use(responsiveImages({
 ````
 
 ### staticDir (string)
-The application's public directory with static files. For example: '/public' or '/pub' or '/dist' ...
+The application's public directory containing static files. For example: '/public' or '/pub' or '/dist' ...
   
 ````javascript
 staticDir: '/public'
@@ -77,11 +79,13 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 ````
 
 ### watchedDirectories (array)  
-Array of directories nested in `staticDir` to watch for images. The module is listening to requests pointing to this folders.
+Array of directories inside `staticDir` to watch for images. The module listens for requests targeting these directories.
 
 At least one directory must be specified!
 
 The use of wildcards `*` is possible.
+
+The paths are relative to `staticDir`.
 
 (following examples with `staticDir: '/public'`)
 
@@ -123,22 +127,22 @@ cacheSuffix: '-cache'
 ````
 
 ### cookieName (string)  
-The name of the cookie is changeable. The name must be the same as the one mentioned in the `<head>` tag (section "usage/frontend" above).
+You can change the cookie name. The name must match the cookie name used in the `<head>` snippet above.
 
 ````javascript
 cookieName: 'my-cookie-name'
 ````
 
 ### scaleBy (string)  
-Possible values: `breakpoint` or `viewport`.  
+Valid values: `breakpoint` or `viewport`.  
 
-`breakpoint` scales images to the next equal or higher breakpoint (see `breakpoints` option below).
+`breakpoint` scales images to the next breakpoint that is equal to or greater than the viewport width (see `breakpoints` option below).
 
 ````javascript
 scaleBy: 'breakpoint'
 ````
 
-`viewport` scales images exactly to the width of the client browser (not recommended for public websites, can bloat your webspace).
+`viewport` scales images exactly to the width of the client browser (not recommended for public websites, can consume a lot of disk space).
 
 ````javascript
 scaleBy: 'viewport'
@@ -160,13 +164,13 @@ breakpoints: [320, 480, 640, 800, 1024, 1280, 1366, 1440, 1600, 1920, 2048, 2560
 ### directScaling (boolean)  
 `directScaling` and `directScaleSizes` are used to scale images directly if the query parameter `w` is set.  
   
-For example `images/img.jpg?w=180` scales img.jpg to 180px width and stores it in `images-cache/180/img.jpg`.  
+For example `images/img.jpg?w=180` scales img.jpg to 180px width and stores the scaled image in `images-cache/180/img.jpg`.  
 
 ````javascript
 directScaling: false
 ````
 
-It is recommended to combine this option with `directScaleSizes` to prevent your web space from getting bloated.
+It is recommended to combine this option with `directScaleSizes` to prevent your disk space from getting bloated.
 
 Example for img srcset ([MDN Responsive images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)).
 
@@ -186,7 +190,7 @@ The query parameter name for `directScaling`.
 directScalingParam: 'myparam'
 ````
 
-The url should look then like this: `img.jpg?myparam=180`.
+The URL should then look like this: `img.jpg?myparam=180`.
 
 ### directScaleSizes (array)  
 Array of allowed sizes (see `directScaling` option above).
@@ -203,7 +207,7 @@ This allows only the following parameters:
 - `path-to/img.jpg?w=180`
 - `path-to/img.jpg?w=260`
 
-Leave it empty to allow any image size (not recommended).
+Leave this array empty to allow any image size (not recommended).
 
 ````javascript
 directScaleSizes: []
