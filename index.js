@@ -12,12 +12,10 @@
  * ----------------------------------------------------------
  */
 
-const fs        = require('fs-extra')
-const imageSize = require('image-size')
+const fs        = require('node:fs')
 const path      = require('path')
 const pc        = require('picocolors')
 const sharp     = require('sharp')
-const url       = require('url')
 
 
 /**
@@ -52,14 +50,14 @@ module.exports = function responsiveImages(options) {
 			console.log(`'express-responsive-images': ${pc[color](message)}`)
 	}
 
-	return (req, res, next) => {
+	const handleRequest = async (req, res, next) => {
 
 		// declare requested url parts
-		let urlObj          = url.parse(req.url, true)      // e.g. req.url = /media/subdir/image.jpg?w=200
-		let requestUrl      = urlObj.pathname               // e.g. /media/subdir/image.jpg
-		let requestPath     = path.dirname(urlObj.pathname) // e.g. /media/subdir
-		let requestFileName = path.basename(requestUrl)     // e.g. 'image.jpg'
-		let requestQueryW   = parseInt(urlObj.query[options.directScalingParam]) || 0 // e.g. 200
+		let urlObj          = new URL(req.url, 'http://localhost') // e.g. req.url = /media/subdir/image.jpg?w=200
+		let requestUrl      = urlObj.pathname                      // e.g. /media/subdir/image.jpg
+		let requestPath     = path.dirname(urlObj.pathname)        // e.g. /media/subdir
+		let requestFileName = path.basename(requestUrl)            // e.g. 'image.jpg'
+		let requestQueryW   = Number.parseInt(urlObj.searchParams.get(options.directScalingParam), 10) || 0 // e.g. 200
 
 		debug(`yellow`, `${req.url} --------------------------------------`)
 
@@ -95,22 +93,12 @@ module.exports = function responsiveImages(options) {
 		let reqFileName      = requestFileName               // e.g. 'image.jpg'
 		let reqFileType      = reqFileName.split('.').pop()  // e.g. '.jpg'
 		let newFileType      = ''                            // can become e.g. '.webp'
-		let newFilePath      = ''  													 // will become e.g. '/images-cache/1280/image.jpg'
+		let newFilePath      = ''                            // will become e.g. '/images-cache/1280/image.jpg'
 		let cacheFilePath    = ''                            // will become e.g. '<FILESYSTEMPATH>/<PROJECT>/images-cache/1280/image.jpg'
 		let cacheFileWidth   = 0                             // will become e.g. '1280'
 		let cacheDirPath     = path.join(process.cwd(), options.staticDir + path.dirname(requestUrl) + options.cacheSuffix) // e.g. '<FILESYSTEMPATH>/<PROJECT>/public/images-cache', will become e.g.: '<FILESYSTEMPATH>/<PROJECT>/public/images-cache/1280'
-		let deviceParameters = [] 											     // array: deviceParameters[2] = device-density, deviceParameters[3] = device-width
-
-		// is image corrupted ?
-		const isImageCorrupted = (imagePath) => {
-			try {
-				imageSize(imagePath)
-				return false
-			} catch (err) {
-				debug(`red`, `(${imagePath}) image is corrupted`)
-				return true
-			}
-		}
+		let deviceParameters = []                            // array: deviceParameters[2] = device-density, deviceParameters[3] = device-width
+		let originalImageWidth = 0
 
 		// change requested url and return
 		const sendCachedFile = () => {
@@ -122,7 +110,7 @@ module.exports = function responsiveImages(options) {
 		// create scaled image
 		const createCacheFile = async () => {
 			// create directory if needed
-			fs.ensureDirSync(cacheDirPath)
+			fs.mkdirSync(cacheDirPath, { recursive: true })
 			// disable sharp to cache files
 			sharp.cache(false)
 			// create and cache image
@@ -177,9 +165,19 @@ module.exports = function responsiveImages(options) {
 			return next()
 		}
 
-		// original image corrupted ?
-		if (isImageCorrupted(originalFilePath)) 
+		// read and validate image metadata
+		try {
+			const metadata = await sharp(originalFilePath).metadata()
+			originalImageWidth = metadata.width
+		}
+		catch(err) {
+			debug(`red`, `(${originalFilePath}) image metadata cannot be read: ${err}`)
 			return next()
+		}
+		if (!Number.isInteger(originalImageWidth) || originalImageWidth < 1) {
+			debug(`red`, `(${originalFilePath}) image width is missing or invalid`)
+			return next()
+		}
 
 		// does cookie exists ?
 		if (req.headers.cookie) {
@@ -254,13 +252,13 @@ module.exports = function responsiveImages(options) {
 		}
 
 		// return if image is smaller than newImageWidth
-		if (newImageWidth >= imageSize(originalFilePath).width) {
+		if (newImageWidth >= originalImageWidth) {
 			debug(`magenta`, `(${reqFileName}) original image is smaller than new image width`)
 			// if fileTypeConversion
 			if (fileTypeConversion) {
 				debug(`magenta`, `(${reqFileName}) preparing fileTypeConversion`)
 				cacheFilePath = path.join(cacheDirPath, reqFileName + newFileType)
-				cacheFileWidth = imageSize(originalFilePath).width
+				cacheFileWidth = originalImageWidth
 				newFilePath = path.dirname(requestUrl) + options.cacheSuffix + '/' + reqFileName + newFileType
 				return prepareResponse()
 			}
@@ -312,6 +310,10 @@ module.exports = function responsiveImages(options) {
 
 		newFilePath = path.dirname(requestUrl) + options.cacheSuffix + '/' + cacheFileWidth.toString() + '/' + reqFileName + newFileType
 		return prepareResponse()
+	}
+
+	return (req, res, next) => {
+		handleRequest(req, res, next).catch(next)
 	}
 
 }
